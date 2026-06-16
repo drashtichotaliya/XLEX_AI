@@ -23,24 +23,12 @@ const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/
 
 // ── System prompt ───────────────────────────────────────────
 const SYSTEM_PROMPT = process.env.SYSTEM_PROMPT ||
-  'You are XLEX AI, the official AI assistant of XLEX Batteries Pvt. Ltd. and an expert in electric vehicle battery technology. Provide clear, accurate, and concise answers about EV batteries, including battery chemistry, charging practices, maintenance, lifespan, degradation factors, thermal management, battery pack design, and emerging battery technologies. XLEX Batteries Pvt. Ltd. is a Pune-based startup specializing in advanced lithium-ion battery solutions for electric vehicles, drones, robotics, energy storage systems, and industrial applications, with expertise in customized battery packs, battery thermal management, and energy-efficient designs. When users ask about XLEX, confidently explain the company expertise and solutions instead of treating XLEX as an unknown term. You can also analyze files, PDFs, and images shared by users. Format responses clearly using markdown when helpful, and maintain a professional, technically accurate, concise, and helpful tone.';
+  'You are a helpful EV battery expert assistant. Provide clear, accurate, and concise answers about electric vehicle batteries, including their chemistry, maintenance, lifespan, charging practices, and degradation factors. You can also read and analyse any files, PDFs, or images the user shares. Format your responses clearly with markdown when helpful.';
 
 // ── Conversation context (in-memory, per-session) ───────────
 const conversationHistory = new Map();
 
-// ── PDF text extraction helper ──────────────────────────────
-async function extractPdfText(base64Data) {
-  try {
-    const pdfParse = require('pdf-parse');
-    const buffer   = Buffer.from(base64Data, 'base64');
-    const result   = await pdfParse(buffer);
-    return result.text || '';
-  } catch (err) {
-    console.warn('[Server] pdf-parse error:', err.message);
-    if (err.code === 'MODULE_NOT_FOUND') return '[PDF_PARSE_NOT_INSTALLED]';
-    return '';
-  }
-}
+
 
 // ── Build Gemini parts array from attachments ───────────────
 // Gemini uses "parts" with inlineData for images, text for everything else
@@ -52,27 +40,20 @@ async function buildGeminiParts(userText, attachments) {
     const name = att.name     || 'file';
     const data = att.data     || '';
 
-    if (mime.startsWith('image/')) {
-      // Gemini vision: inlineData with base64
+    if (
+      mime.startsWith('image/') || 
+      mime === 'application/pdf' ||
+      mime.includes('wordprocessingml') ||
+      mime.includes('spreadsheetml') ||
+      mime.includes('msword') ||
+      mime.includes('ms-excel')
+    ) {
       parts.push({
         inlineData: {
           mimeType: mime,
           data:     data,
         },
       });
-
-    } else if (mime === 'application/pdf') {
-      const extracted = await extractPdfText(data);
-      if (extracted === '[PDF_PARSE_NOT_INSTALLED]') {
-        parts.push({ text: `[The user attached a PDF named "${name}" but pdf-parse is not installed. Run: npm install pdf-parse]` });
-      } else if (extracted.trim().length > 0) {
-        const truncated = extracted.length > 12000
-          ? extracted.slice(0, 12000) + '\n\n[... PDF truncated for length ...]'
-          : extracted;
-        parts.push({ text: `The user attached a PDF named "${name}". Here is its extracted text:\n\n${truncated}` });
-      } else {
-        parts.push({ text: `[The user attached a PDF named "${name}" but no readable text could be extracted — it may be a scanned image PDF.]` });
-      }
 
     } else if (
       mime === 'text/plain' || mime === 'text/csv' || mime === 'text/markdown' ||
@@ -277,12 +258,5 @@ app.listen(PORT, () => {
   console.log(`\n✅ XLEX AI Server running at http://localhost:${PORT}`);
   console.log(`   Model:   ${GEMINI_MODEL}`);
   console.log(`   API Key: ${GEMINI_API_KEY ? '✓ Loaded from .env' : '✗ NOT SET — add GEMINI_API_KEY to .env'}`);
-
-  try {
-    require('pdf-parse');
-    console.log(`   PDF:     ✓ pdf-parse ready`);
-  } catch (_) {
-    console.warn(`   PDF:     ✗ pdf-parse not found — run: npm install pdf-parse`);
-  }
   console.log('');
 });
