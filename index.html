@@ -1,0 +1,328 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>XLEX AI Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Geist:wght@400;500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "on-primary-fixed-variant": "#594317",
+        "tertiary": "#ffe2b2",
+        "on-tertiary-fixed": "#261900",
+        "error-container": "#93000a",
+        "on-tertiary": "#3f2e09",
+        "secondary-container": "#474744",
+        "on-background": "#e5e2e0",
+        "error": "#ffb4ab",
+        "on-primary-container": "#685123",
+        "surface-container-lowest": "#0e0e0d",
+        "surface-tint": "#e2c28a",
+        "surface-container-low": "#1c1c1a",
+        "on-primary": "#402d02",
+        "on-secondary-fixed-variant": "#474744",
+        "surface-container-highest": "#353533",
+        "tertiary-fixed-dim": "#dfc391",
+        "secondary-fixed-dim": "#c8c6c3",
+        "surface": "#131312",
+        "inverse-on-surface": "#31302f",
+        "inverse-primary": "#735b2c",
+        "surface-bright": "#3a3938",
+        "on-secondary": "#31302e",
+        "on-tertiary-container": "#66522a",
+        "secondary-fixed": "#e5e2df",
+        "surface-container": "#20201e",
+        "surface-variant": "#353533",
+        "on-surface-variant": "#d0c5b6",
+        "on-error-container": "#ffdad6",
+        "outline-variant": "#4d463a",
+        "on-secondary-container": "#b7b5b2",
+        "outline": "#998f82",
+        "primary-container": "#e6c68d",
+        "surface-container-high": "#2a2a29",
+        "tertiary-container": "#e3c694",
+        "on-secondary-fixed": "#1c1c1a",
+        "on-tertiary-fixed-variant": "#57441d",
+        "primary-fixed": "#ffdea5",
+        "on-primary-fixed": "#261900",
+        "on-surface": "#e5e2e0",
+        "background": "#131312",
+        "secondary": "#c8c6c3",
+        "on-error": "#690005",
+        "tertiary-fixed": "#fddfab",
+        "primary-fixed-dim": "#e2c28a",
+        "inverse-surface": "#e5e2e0",
+        "surface-dim": "#131312",
+        "primary": "#ffe3b3",
+        /* ── LIGHT MODE OVERRIDES (applied via .light class on <html>) ── */
+        "light-background":            "#faf8f4",
+        "light-surface":               "#f5f2ec",
+        "light-surface-container-low": "#eeeae0",
+        "light-surface-container":     "#e8e4d8",
+        "light-surface-container-high":"#dedad0",
+        "light-on-surface":            "#1c1a18",
+        "light-on-surface-variant":    "#4a4438",
+        "light-outline":               "#7a7060",
+        "light-primary":               "#7a5c18"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem","lg": "0.5rem","xl": "0.75rem","full": "9999px"
+      },
+      "fontFamily": {
+        "display-lg": ["Manrope"],"headline-lg": ["Manrope"],
+        "body-md": ["Manrope"],"headline-lg-mobile": ["Manrope"],"label-sm": ["Geist"]
+      },
+      "fontSize": {
+        "display-lg": ["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"700"}],
+        "headline-lg": ["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"600"}],
+        "body-md": ["16px",{"lineHeight":"24px","fontWeight":"400"}],
+        "headline-lg-mobile": ["24px",{"lineHeight":"32px","fontWeight":"600"}],
+        "label-sm": ["12px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"500"}]
+      }
+    }
+  }
+}
+</script>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .glow-gold { box-shadow: 0 0 40px rgba(226,194,138,0.15); }
+  .sidebar-transition { transition: width 0.3s cubic-bezier(0.4,0,0.2,1); }
+  .text-gradient-gold {
+    background: linear-gradient(to right, #ffe3b3, #ffffff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  /* ── LIGHT MODE ── */
+  html.light body                    { background-color: #faf8f4 !important; color: #1c1a18 !important; }
+  html.light .text-gradient-gold     { background: linear-gradient(to right, #7a5c18, #3d2e0c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  html.light .bg-background          { background-color: #faf8f4 !important; }
+  html.light .bg-surface             { background-color: #f5f2ec !important; }
+  html.light .bg-surface-container-low  { background-color: #eeeae0 !important; }
+  html.light .bg-surface-container       { background-color: #e8e4d8 !important; }
+  html.light .bg-surface-container-high  { background-color: #dedad0 !important; }
+  html.light .bg-surface-container-highest { background-color: #d4d0c4 !important; }
+  html.light .text-on-surface        { color: #1c1a18 !important; }
+  html.light .text-on-surface-variant{ color: #4a4438 !important; }
+  html.light .text-outline           { color: #7a7060 !important; }
+  html.light .text-primary           { color: #7a5c18 !important; }
+  html.light .border-white\/10       { border-color: rgba(0,0,0,0.1) !important; }
+  html.light .border-white\/5        { border-color: rgba(0,0,0,0.07) !important; }
+  html.light .bg-primary             { background-color: #7a5c18 !important; }
+  html.light .text-on-primary        { color: #fff !important; }
+  html.light .bg-primary-container\/10 { background-color: rgba(122,92,24,0.1) !important; }
+  html.light .bg-primary-container   { background-color: #e6c68d !important; }
+  html.light .text-on-primary-container { color: #3d2000 !important; }
+  html.light .hover\:bg-surface-container-high:hover { background-color: #dedad0 !important; }
+  html.light .bg-primary\/5          { background-color: rgba(122,92,24,0.05) !important; }
+  html.light .bg-primary\/20         { background-color: rgba(122,92,24,0.15) !important; }
+  html.light footer                  { color: #7a7060 !important; }
+  /* Recent chat entries in sidebar - fix dark/light visibility */
+  html.light #sidebar button           { color: #4a4438 !important; }
+  /* Chat input bar - light mode */
+  html.light #xlex-chat-bar           { background: rgba(0,0,0,0.04) !important; border-color: rgba(0,0,0,0.12) !important; }
+  /* Scrollbar - always right side, styled */
+  #xlex-msgs-wrapper::-webkit-scrollbar { width: 5px; }
+  #xlex-msgs-wrapper::-webkit-scrollbar-track { background: transparent; }
+  #xlex-msgs-wrapper::-webkit-scrollbar-thumb { background: rgba(226,194,138,0.25); border-radius: 4px; }
+  #xlex-msgs-wrapper::-webkit-scrollbar-thumb:hover { background: rgba(226,194,138,0.5); }
+</style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<div class="flex h-screen w-full relative">
+
+<!-- SideNavBar -->
+<aside class="sidebar-transition flex flex-col h-full bg-surface-container-low border-r border-white/10 z-40 w-64" id="sidebar">
+<div class="flex flex-col h-full p-4 overflow-hidden">
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-8 px-2">
+    <div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-content-center text-on-primary-container shrink-0">
+      <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmb1xaSeX2tIHY99p4-teW31oTS-DGfb5KGc2wTicLkXb0SUa-tG9ATovBMEoQRM-fDnqPNmCKLghxo2JQxyNXWBNUjogjtYYbPwXq5Jfypyh83w4uGl1OmJAkvk9f7KEgxyQ10wSUe8rVk2YHfAqh-KexeDCTexiYNhF0qX8RBSMo-8ie3G_xtWUi26OOUx6TYMRLVdFcqEiIiD3Z_2-ncilucDMBXpSb93EQ8OVTTBdo3Jk63Vxm5DCPREHt2qCWTVC_dv3H1Ds4" alt="XLEX Logo" class="w-full h-full object-contain p-1">
+    </div>
+    <div class="overflow-hidden whitespace-nowrap">
+      <h1 class="font-display-lg text-[20px] leading-tight text-primary">XLEX AI</h1>
+      <p class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-widest">Premium Intelligence</p>
+    </div>
+  </div>
+  <!-- Main Actions -->
+  <nav class="flex-1 flex flex-col gap-1">
+    <button class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary-container/10 text-primary font-bold transition-all duration-200 active:scale-95 group">
+      <span class="material-symbols-outlined" data-icon="add">add</span>
+      <span class="font-body-md">New Chat</span>
+    </button>
+    <button class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 active:scale-98 group">
+      <span class="material-symbols-outlined" data-icon="history">history</span>
+      <span class="font-body-md">History</span>
+    </button>
+    <div class="mt-6 mb-2 px-4">
+      <span class="text-[10px] uppercase tracking-widest text-outline font-label-sm">Recent</span>
+    </div>
+    <div class="flex flex-col gap-1" id="sidebar-history">
+      <button class="flex items-center gap-3 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all text-left text-sm truncate">
+        <span class="material-symbols-outlined text-sm">chat_bubble</span>
+        <span class="truncate">EV Battery Longevity</span>
+      </button>
+      <button class="flex items-center gap-3 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all text-left text-sm truncate">
+        <span class="material-symbols-outlined text-sm">chat_bubble</span>
+        <span class="truncate">Quantum Computing Intro</span>
+      </button>
+      <button class="flex items-center gap-3 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all text-left text-sm truncate">
+        <span class="material-symbols-outlined text-sm">chat_bubble</span>
+        <span class="truncate">Explain me about ev batt...</span>
+      </button>
+      <button class="flex items-center gap-3 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all text-left text-sm truncate">
+        <span class="material-symbols-outlined text-sm">chat_bubble</span>
+        <span class="truncate">XLEX</span>
+      </button>
+      <button class="flex items-center gap-3 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-all text-left text-sm truncate">
+        <span class="material-symbols-outlined text-sm">chat_bubble</span>
+        <span class="truncate">explain the XLEX battery ...</span>
+      </button>
+    </div>
+  </nav>
+</div>
+</aside>
+
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col relative overflow-hidden bg-background">
+  <!-- Top Controls -->
+  <div class="absolute top-6 left-6 right-6 flex justify-between items-center z-10">
+    <button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-all" id="sidebarToggle">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+    <div class="flex items-center gap-4">
+      <button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-low border border-white/5 text-on-surface-variant hover:text-primary transition-all active:scale-95 shadow-sm" id="themeToggle">
+        <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Hero/Chat Section -->
+  <div class="flex-1 flex flex-col items-center justify-center px-6 max-w-4xl mx-auto w-full py-20">
+    <!-- Brand Anchor -->
+    <div class="mb-12 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <h2 class="font-display-lg text-display-lg md:text-display-lg text-headline-lg-mobile text-gradient-gold mb-4">What's on your mind today?</h2>
+    </div>
+    <!-- Input Pill Container -->
+    <div class="w-full relative group mb-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+      <div class="absolute -inset-1 bg-primary/20 blur-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 rounded-full"></div>
+      <div class="relative flex items-center bg-surface-container-low border border-white/10 rounded-full p-2 h-16 md:h-20 focus-within:border-primary/40 transition-all duration-300">
+        <div class="flex items-center justify-center w-12 h-12 ml-2 text-on-surface-variant">
+          <span class="material-symbols-outlined text-primary/60">auto_awesome</span>
+        </div>
+        <input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface font-body-md px-4 placeholder:text-outline/50" placeholder="Ask XLEX AI" type="text">
+        <div class="flex items-center gap-2 pr-2">
+          <button class="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-primary text-on-primary hover:brightness-110 active:scale-95 transition-all shadow-lg glow-gold">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Suggestion Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
+      <button class="group p-5 bg-surface-container rounded-2xl border border-white/5 hover:border-primary/20 hover:bg-surface-container-high transition-all duration-300 text-left active:scale-[0.98]">
+        <div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary mb-4 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+          <span class="material-symbols-outlined text-sm">bolt</span>
+        </div>
+        <p class="font-body-md text-on-surface-variant group-hover:text-on-surface">Explain me about ev batteries.</p>
+      </button>
+      <button class="group p-5 bg-surface-container rounded-2xl border border-white/5 hover:border-primary/20 hover:bg-surface-container-high transition-all duration-300 text-left active:scale-[0.98]">
+        <div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary mb-4 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+          <span class="material-symbols-outlined text-sm">psychology</span>
+        </div>
+        <p class="font-body-md text-on-surface-variant group-hover:text-on-surface">How does an ev battery work?</p>
+      </button>
+      <button class="group p-5 bg-surface-container rounded-2xl border border-white/5 hover:border-primary/20 hover:bg-surface-container-high transition-all duration-300 text-left active:scale-[0.98]">
+        <div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary mb-4 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+          <span class="material-symbols-outlined text-sm">timelapse</span>
+        </div>
+        <p class="font-body-md text-on-surface-variant group-hover:text-on-surface">What is the lifespan of ev batteries?</p>
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer Attribution -->
+  <footer class="p-8 text-center text-outline font-label-sm opacity-50">
+    XLEX AI can make mistakes. Verify important information.
+  </footer>
+
+  <!-- Background Decorative Element -->
+  <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
+</main>
+</div>
+
+<script>
+  // ── Sidebar Toggle ──
+  const sidebar = document.getElementById('sidebar');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  let isSidebarOpen = true;
+
+  sidebarToggle.addEventListener('click', () => {
+    isSidebarOpen = !isSidebarOpen;
+    if (isSidebarOpen) {
+      sidebar.classList.remove('w-0', 'opacity-0');
+      sidebar.classList.add('w-64');
+    } else {
+      sidebar.classList.add('w-0', 'opacity-0');
+      sidebar.classList.remove('w-64');
+    }
+  });
+
+  // ── Theme Toggle ──
+  const themeToggle = document.getElementById('themeToggle');
+  const html = document.documentElement;
+  const themeIcon = document.getElementById('themeIcon');
+
+  // Load saved preference
+  const savedTheme = localStorage.getItem('xlex-theme') || 'dark';
+  applyTheme(savedTheme);
+
+  themeToggle.addEventListener('click', () => {
+    const isDark = html.classList.contains('dark');
+    applyTheme(isDark ? 'light' : 'dark');
+    themeToggle.classList.add('scale-110');
+    setTimeout(() => themeToggle.classList.remove('scale-110'), 200);
+  });
+
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      html.classList.remove('dark');
+      html.classList.add('light');
+      themeIcon.textContent = 'light_mode';
+    } else {
+      html.classList.remove('light');
+      html.classList.add('dark');
+      themeIcon.textContent = 'dark_mode';
+    }
+    try { localStorage.setItem('xlex-theme', theme); } catch(e) {}
+  }
+
+  // ── Responsive Sidebar ──
+  function handleResize() {
+    if (window.innerWidth < 768) {
+      if (isSidebarOpen) {
+        isSidebarOpen = false;
+        sidebar.classList.add('w-0', 'opacity-0');
+        sidebar.classList.remove('w-64');
+      }
+    } else {
+      if (!isSidebarOpen) {
+        isSidebarOpen = true;
+        sidebar.classList.remove('w-0', 'opacity-0');
+        sidebar.classList.add('w-64');
+      }
+    }
+  }
+
+  window.addEventListener('resize', handleResize);
+  handleResize();
+</script>
+<script src="app.js"></script>
+
+
+</body></html>
